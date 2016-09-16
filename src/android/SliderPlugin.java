@@ -26,7 +26,7 @@ import org.json.JSONException;
  */
 public class SliderPlugin extends CordovaPlugin {
 
-    private final String SLIDER_PLUGIN = "SliderPlugin";
+    public final String SLIDER_PLUGIN = "SliderPlugin";
     public final static int PAGES = 5;
     // You can choose a bigger number for LOOPS, but you know, nobody will fling
     // more than 1000 times just in order to test your "infinite" ViewPager :D
@@ -36,6 +36,9 @@ public class SliderPlugin extends CordovaPlugin {
     public MyPagerAdapter adapter;
     public ViewPager pager;
     public Activity activity;
+    private View pagerLayout;
+    private ViewGroup root;
+    private boolean isShow;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -74,53 +77,52 @@ public class SliderPlugin extends CordovaPlugin {
 //
 //        final ViewGroup root = (ViewGroup) webView.getView().getParent();
 
-        activity = cordova.getActivity();
+        if (pagerLayout == null) {
+            activity = cordova.getActivity();
 
-//        pager = new ViewPager(cordova.getActivity());
-//        pager.setBackgroundColor(Color.WHITE);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1420);
-        params.topMargin = 280;
-//        pager.setLayoutParams(params);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1420);
+            params.topMargin = 280;
 
 
-        final View pagerLayout = LayoutInflater.from(activity).inflate(activity.getResources().getIdentifier("viewpager", "layout", activity.getPackageName()), null);
+            pagerLayout = LayoutInflater.from(activity).inflate(activity.getResources().getIdentifier("viewpager", "layout", activity.getPackageName()), null);
 
-        pagerLayout.setLayoutParams(params);
-        PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(R.id.pager_container);
+            pagerLayout.setLayoutParams(params);
+            PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(R.id.pager_container);
 
 
-        pager = pagerContainer.getViewPager();
-        adapter = new MyPagerAdapter(activity);
+            pager = pagerContainer.getViewPager();
+            adapter = new MyPagerAdapter(activity);
 
-        pager.setOffscreenPageLimit(adapter.getCount());
-        pager.setPageTransformer(false, adapter);
+            pager.setOffscreenPageLimit(adapter.getCount());
+            pager.setPageTransformer(false, adapter);
 
-        pager.setAdapter(adapter);
+            pager.setAdapter(adapter);
 
-        pager.setClipChildren(false);
+            pager.setClipChildren(false);
 
-        // Set current item to the middle page so we can fling to both
-        // directions left and right
-        pager.setCurrentItem(FIRST_PAGE);
+            // Set current item to the middle page so we can fling to both
+            // directions left and right
+            pager.setCurrentItem(FIRST_PAGE);
 
-        // Necessary or the pager will only have one extra page to show
-        // make this at least however many pages you can see
-        pager.setOffscreenPageLimit(3);
+            // Necessary or the pager will only have one extra page to show
+            // make this at least however many pages you can see
+            pager.setOffscreenPageLimit(3);
 
-        // Set margin for pages as a negative number, so a part of next and
-        // previous pages will be showed
-        pager.setPageMargin(10);
+            // Set margin for pages as a negative number, so a part of next and
+            // previous pages will be showed
+            pager.setPageMargin(10);
 
-        final ViewGroup root = (ViewGroup) webView.getView().getParent();
-
+            root = (ViewGroup) webView.getView().getParent();
+        }
 
         if ("close".equals(action)) {
-
             cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-//                root.addView(pager);
+                    if(!isShow) return;
+
                     root.removeView(pagerLayout);
+                    isShow = false;
                 }
             });
 
@@ -129,14 +131,13 @@ public class SliderPlugin extends CordovaPlugin {
             cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-//                root.addView(pager);
+                    if(isShow) return;
+
                     root.addView(pagerLayout);
+                    isShow = true;
                 }
             });
 
-            return true;
-        } else if ("echo".equals(action)) {
-            callbackContext.success();
             return true;
         }
 
