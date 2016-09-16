@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="taqtile-plugin-slider"
+    version="0.0.1">
+    <name>Slider plugin</name>
+
+    <!-- android -->
+    <platform name="android">
+        <js-module src="www/android/slider.js" name="slider">
+            <runs/>
+            <clobbers target="window.TaqtileSlider" />
+        </js-module>
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="SliderPlugin">
+                <param name="android-package" value="com.taqtile.dierbergs.slider.SliderPlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:name="mobile_app" android:launchMode="singleInstance" />
+        </config-file>
+
+        <framework src="com.android.support:support-v4:+" />
+
+        <source-file src="src/android/SliderPlugin.java" target-dir="src/com/taqtile/dierbergs/slider" />
+        <source-file src="src/android/MyFragment.java" target-dir="src/com/taqtile/dierbergs/slider" />
+        <source-file src="src/android/MyLinearLayout.java" target-dir="src/com/taqtile/dierbergs/slider" />
+        <source-file src="src/android/MyPagerAdapter.java" target-dir="src/com/taqtile/dierbergs/slider" />
+
+        <source-file src="src/android/layout/page.xml" target-dir="res/layout" />
+        <source-file src="src/android/layout/viewpager.xml" target-dir="res/layout" />
+    </platform>
+
+</plugin>

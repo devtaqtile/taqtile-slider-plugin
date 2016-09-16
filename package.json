@@ -1,0 +1,11 @@
+{
+  "name": "taqtile-plugin-slider",
+  "version": "0.0.1",
+  "description": "Image slider plugin for cordova",
+  "cordova": {
+    "id": "taqtile-plugin-slider",
+    "platforms": [
+      "android"
+    ]
+  }
+}
