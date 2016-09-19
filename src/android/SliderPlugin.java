@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.FrameLayout;
 
-import com.ionicframework.myapp398042.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
