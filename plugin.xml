@@ -2,7 +2,7 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     id="taqtile-plugin-slider"
-    version="0.0.1">
+    version="0.1.0">
     <name>Slider plugin</name>
 
     <!-- android -->
