@@ -4,12 +4,23 @@ var Slider = function () {
 
 };
 
-Slider.show = function (urls, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "SliderPlugin", "show", urls)
+Slider.show = function (element, urls, successCallback, errorCallback) {
+    var elementParams = {
+        "width": element.getBoundingClientRect().width,
+        "height": element.getBoundingClientRect().height,
+        "top": element.getBoundingClientRect().top
+    };
+
+    var data = [elementParams, urls];
+    exec(successCallback, errorCallback, "SliderPlugin", "show", data)
 };
 
 Slider.close = function (successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "SliderPlugin", "close",[])
+    exec(successCallback, errorCallback, "SliderPlugin", "close", [])
+};
+
+Slider.destroy = function (successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "SliderPlugin", "destroy", [])
 };
 
 

@@ -1,10 +1,6 @@
 package com.taqtile.dierbergs.slider;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -14,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransformer {
     public final static float BIG_SCALE = 1.0f;
@@ -26,29 +22,33 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
 
     private Activity context;
     private float scale;
-    private List<String> urls;
+    private JSONArray items;
     private ImageLoader imageLoader;
 
 
-    public MyPagerAdapter(Activity context, ArrayList<String> urls) {
+    public MyPagerAdapter(Activity context, JSONArray items) {
         this.context = context;
-        this.urls = urls;
+        this.items = items;
     }
 
     public View getItem(int position) {
 
+        JSONObject item;
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View page = inflater.inflate(context.getResources().getIdentifier("page", "layout", context.getPackageName()), null);
-//        TextView textView = (TextView) page.findViewById(context.getResources().getIdentifier("text_view", "id", context.getPackageName()));
-        ImageView imageView = (ImageView) page.findViewById(context.getResources().getIdentifier("imageView", "id", context.getPackageName()));
-//        textView.setText("page " + position);
 
-//        imageView.setImageResource(android.R.drawable.btn_star_big_on);
+        try {
+            item = items.getJSONObject(position);
 
+            TextView textView = (TextView) page.findViewById(context.getResources().getIdentifier("textView", "id", context.getPackageName()));
+            textView.setText(item.getString("name"));
 
-        imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(urls.get(position), imageView);
+            ImageView imageView = (ImageView) page.findViewById(context.getResources().getIdentifier("imageView", "id", context.getPackageName()));
+            imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(item.getString("url"), imageView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         // make the first pager bigger than others
         if (position == SliderPlugin.FIRST_PAGE)
@@ -91,7 +91,7 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
 
     @Override
     public int getCount() {
-        return urls.size();
+        return items.length();
     }
 
 
