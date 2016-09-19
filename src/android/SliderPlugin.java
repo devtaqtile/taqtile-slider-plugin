@@ -71,7 +71,8 @@ public class SliderPlugin extends CordovaPlugin {
 
             pagerLayout = LayoutInflater.from(activity).inflate(activity.getResources().getIdentifier("viewpager", "layout", activity.getPackageName()), null);
             pagerLayout.setLayoutParams(params);
-            PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(R.id.pager_container);
+//            PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(R.id.pager_container);
+            PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(activity.getResources().getIdentifier("pager_container", "id", activity.getPackageName()));;
 
             pager = pagerContainer.getViewPager();
 
