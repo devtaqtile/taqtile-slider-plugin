@@ -4,14 +4,14 @@ var Slider = function () {
 
 };
 
-Slider.show = function (element, urls, successCallback, errorCallback) {
+Slider.show = function (element, items, successCallback, errorCallback) {
     var elementParams = {
         "width": element.getBoundingClientRect().width,
         "height": element.getBoundingClientRect().height,
         "top": element.getBoundingClientRect().top
     };
 
-    var data = [elementParams, urls];
+    var data = [elementParams, items];
     exec(successCallback, errorCallback, "SliderPlugin", "show", data)
 };
 
