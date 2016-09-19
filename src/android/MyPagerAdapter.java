@@ -10,22 +10,29 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransformer {
     public final static float BIG_SCALE = 1.0f;
     public final static float SMALL_SCALE = 0.7f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
 
-    private MyLinearLayout cur = null;
-    private MyLinearLayout next = null;
     private Activity context;
-    private FragmentManager fm;
     private float scale;
-    private int realCount;
+    private List<String> urls;
+    private ImageLoader imageLoader;
 
-    public MyPagerAdapter(Activity context) {
+
+    public MyPagerAdapter(Activity context, ArrayList<String> urls) {
         this.context = context;
+        this.urls = urls;
     }
 
     public View getItem(int position) {
@@ -33,17 +40,21 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View page = inflater.inflate(context.getResources().getIdentifier("page", "layout", context.getPackageName()), null);
-        TextView textView = (TextView) page.findViewById(context.getResources().getIdentifier("text_view", "id", context.getPackageName()));
-        textView.setText("page " + position);
+//        TextView textView = (TextView) page.findViewById(context.getResources().getIdentifier("text_view", "id", context.getPackageName()));
+        ImageView imageView = (ImageView) page.findViewById(context.getResources().getIdentifier("imageView", "id", context.getPackageName()));
+//        textView.setText("page " + position);
 
+//        imageView.setImageResource(android.R.drawable.btn_star_big_on);
+
+
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(urls.get(position), imageView);
 
         // make the first pager bigger than others
         if (position == SliderPlugin.FIRST_PAGE)
             scale = BIG_SCALE;
         else
             scale = SMALL_SCALE;
-
-        position = position % SliderPlugin.PAGES;
 
         page.setScaleX(scale);
         page.setScaleY(scale);
@@ -80,7 +91,7 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
 
     @Override
     public int getCount() {
-        return SliderPlugin.PAGES * SliderPlugin.LOOPS;
+        return urls.size();
     }
 
 

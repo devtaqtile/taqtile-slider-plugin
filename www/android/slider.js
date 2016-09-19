@@ -4,12 +4,12 @@ var Slider = function () {
 
 };
 
-Slider.show = function (successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "SliderPlugin", "show", ["test2"])
+Slider.show = function (urls, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "SliderPlugin", "show", urls)
 };
 
 Slider.close = function (successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "SliderPlugin", "close", ["test"])
+    exec(successCallback, errorCallback, "SliderPlugin", "close",[])
 };
 
 

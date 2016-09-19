@@ -23,11 +23,11 @@
         </config-file>
 
         <framework src="com.android.support:support-v4:+" />
+        <framework src="com.nostra13.universalimageloader:universal-image-loader:+" />
 
         <source-file src="src/android/SliderPlugin.java" target-dir="src/com/taqtile/dierbergs/slider" />
-        <source-file src="src/android/MyFragment.java" target-dir="src/com/taqtile/dierbergs/slider" />
-        <source-file src="src/android/MyLinearLayout.java" target-dir="src/com/taqtile/dierbergs/slider" />
         <source-file src="src/android/MyPagerAdapter.java" target-dir="src/com/taqtile/dierbergs/slider" />
+        <source-file src="src/android/PagerContainer.java" target-dir="src/com/taqtile/dierbergs/slider" />
 
         <source-file src="src/android/layout/page.xml" target-dir="res/layout" />
         <source-file src="src/android/layout/viewpager.xml" target-dir="res/layout" />
