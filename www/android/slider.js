@@ -20,7 +20,7 @@ Slider.show = function (element, items, successCallback, errorCallback) {
 function setBackground(element) {
     if(!element) return false;
 
-    element.backgroundColor = "transparent";
+    element.style.background = "transparent";
     setBackground(element.parentElement)
 }
 
