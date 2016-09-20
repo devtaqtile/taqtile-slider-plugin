@@ -34,21 +34,39 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
         this.callbackContext = callbackContext;
     }
 
+
     public View getItem(final int position) {
 
         JSONObject item;
         LayoutInflater inflater = LayoutInflater.from(context);
         View page = inflater.inflate(context.getResources().getIdentifier("page", "layout", context.getPackageName()), null);
 
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    callbackContext.success(items.getJSONObject(position).get("id").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
         try {
             item = items.getJSONObject(position);
 
             TextView textView = (TextView) page.findViewById(context.getResources().getIdentifier("textView", "id", context.getPackageName()));
+            TextView textViewDesc = (TextView) page.findViewById(context.getResources().getIdentifier("textViewDesc", "id", context.getPackageName()));
             textView.setText(item.getString("name"));
+            textViewDesc.setText(item.getString("description"));
 
             ImageView imageView = (ImageView) page.findViewById(context.getResources().getIdentifier("imageView", "id", context.getPackageName()));
             imageLoader = ImageLoader.getInstance();
             imageLoader.displayImage(item.getString("url"), imageView);
+
+            imageView.setOnClickListener(onClickListener);
+            textView.setOnClickListener(onClickListener);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -61,17 +79,6 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
 
         page.setScaleX(scale);
         page.setScaleY(scale);
-
-        page.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    callbackContext.success(items.getJSONObject(position).get("id").toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         return page;
     }
