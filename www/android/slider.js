@@ -32,6 +32,10 @@ Slider.destroy = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, "SliderPlugin", "destroy", [])
 };
 
+Slider.setclicable = function (value, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "SliderPlugin", "setClickable", [value])
+};
+
 
 module.exports = Slider;
 

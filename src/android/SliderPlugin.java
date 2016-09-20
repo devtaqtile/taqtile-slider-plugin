@@ -49,6 +49,7 @@ public class SliderPlugin extends CordovaPlugin {
     private View pagerLayout;
     private ViewGroup root;
     private boolean isShow;
+    private boolean isClicable = true;
 
     @Override
     public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -102,7 +103,7 @@ public class SliderPlugin extends CordovaPlugin {
             webView.getView().setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(!isShow || event.getY() > height || event.getY() < top){
+                    if(!isClicable || !isShow || event.getY() > height || event.getY() < top){
                         return false;
                     } else {
                         return pagerContainer.onTouchEvent(event);
@@ -175,6 +176,10 @@ public class SliderPlugin extends CordovaPlugin {
                     activity = null;
                 }
             });
+
+            return true;
+        } else if ("setClickable".equals(action)) {
+            isClicable = args.getBoolean(0);
 
             return true;
         }
