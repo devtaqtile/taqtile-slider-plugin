@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,18 +21,20 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
     public final static float SMALL_SCALE = 0.7f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
 
+    private final CallbackContext callbackContext;
     private Activity context;
     private float scale;
     private JSONArray items;
     private ImageLoader imageLoader;
 
 
-    public MyPagerAdapter(Activity context, JSONArray items) {
+    public MyPagerAdapter(Activity context, JSONArray items, CallbackContext callbackContext) {
         this.context = context;
         this.items = items;
+        this.callbackContext = callbackContext;
     }
 
-    public View getItem(int position) {
+    public View getItem(final int position) {
 
         JSONObject item;
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -58,6 +61,17 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
 
         page.setScaleX(scale);
         page.setScaleY(scale);
+
+        page.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    callbackContext.success(items.getJSONObject(position).get("id").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return page;
     }

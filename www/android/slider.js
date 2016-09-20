@@ -11,9 +11,18 @@ Slider.show = function (element, items, successCallback, errorCallback) {
         "top": element.getBoundingClientRect().top
     };
 
+    setBackground(element);
+
     var data = [elementParams, items];
     exec(successCallback, errorCallback, "SliderPlugin", "show", data)
 };
+
+function setBackground(element) {
+    if(!element) return false;
+
+    element.backgroundColor = "transparent";
+    setBackground(element.parentElement)
+}
 
 Slider.close = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, "SliderPlugin", "close", [])
