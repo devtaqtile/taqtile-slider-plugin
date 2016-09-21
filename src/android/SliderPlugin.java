@@ -58,7 +58,7 @@ public class SliderPlugin extends CordovaPlugin {
         FrameLayout.LayoutParams params;
         float density;
 
-        if (activity == null) {
+        if (activity == null && "show".equals(action)) {
             activity = cordova.getActivity();
 
             density = activity.getResources().getDisplayMetrics().density;
