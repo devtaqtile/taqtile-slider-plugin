@@ -104,14 +104,13 @@ public class SliderPlugin extends CordovaPlugin {
             webView.getView().setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(!isClicable || !isShow || event.getY() > height + top || event.getY() < top){
+                    if (!isClicable || !isShow || event.getY() > height + top || event.getY() < top) {
                         return false;
                     } else {
                         return pagerContainer.onTouchEvent(event);
                     }
                 }
             });
-
         }
 
         if ("close".equals(action)) {

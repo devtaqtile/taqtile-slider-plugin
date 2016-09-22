@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 /**
  * Created by dmitry on 9/16/16.
  */
-public class PagerContainer extends FrameLayout implements ViewPager.OnPageChangeListener {
+public class PagerContainer extends FrameLayout implements ViewPager.OnPageChangeListener, ViewPager.OnClickListener {
     private ViewPager mPager;
     boolean mNeedsRedraw = false;
 
@@ -65,18 +65,40 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
         mCenter.y = h / 2;
     }
 
+    private final float MOVE_THRESHOLD_DP = 20 * getResources().getDisplayMetrics().density;
+
+    private boolean mMoveOccured;
+    private float mDownPosX;
+    private float mDownPosY;
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         //We capture any touches not already handled by the ViewPager
         // to implement scrolling from a touch outside the pager bounds.
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mInitialTouch.x = (int)ev.getX();
-                mInitialTouch.y = (int)ev.getY();
+                mInitialTouch.x = (int) ev.getX();
+                mInitialTouch.y = (int) ev.getY();
+
+                mMoveOccured = false;
+                mDownPosX = ev.getX();
+                mDownPosY = ev.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (!mMoveOccured) {
+                    // TAP occured
+                    ((MyPagerAdapter) mPager.getAdapter()).getItem(mPager.getCurrentItem()).callOnClick();
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (Math.abs(ev.getX() - mDownPosX) > MOVE_THRESHOLD_DP || Math.abs(ev.getY() - mDownPosY) > MOVE_THRESHOLD_DP) {
+                    mMoveOccured = true;
+                }
+                break;
             default:
-                ev.offsetLocation(mCenter.x - mInitialTouch.x, mCenter.y - mInitialTouch.y);
                 break;
         }
+        ev.offsetLocation(mCenter.x - mInitialTouch.x, mCenter.y - mInitialTouch.y);
 
         return mPager.dispatchTouchEvent(ev);
     }
@@ -89,10 +111,16 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
     }
 
     @Override
-    public void onPageSelected(int position) { }
+    public void onPageSelected(int position) {
+    }
 
     @Override
     public void onPageScrollStateChanged(int state) {
         mNeedsRedraw = (state != ViewPager.SCROLL_STATE_IDLE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        ((MyPagerAdapter) mPager.getAdapter()).getItem(mPager.getCurrentItem()).callOnClick();
     }
 }

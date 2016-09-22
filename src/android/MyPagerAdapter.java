@@ -64,8 +64,8 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
             imageLoader = ImageLoader.getInstance();
             imageLoader.displayImage(item.getString("url"), imageView);
 
-            imageView.setOnClickListener(onClickListener);
-            textView.setOnClickListener(onClickListener);
+            page.setOnClickListener(onClickListener);
+//            textView.setOnClickListener(onClickListener);
 
         } catch (JSONException e) {
             e.printStackTrace();
