@@ -29,7 +29,8 @@
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:duplicateParentState="true" />
+                android:duplicateParentState="true"
+                android:overScrollMode="never" />
     </com.taqtile.dierbergs.slider.PagerContainer>
 
 </FrameLayout>

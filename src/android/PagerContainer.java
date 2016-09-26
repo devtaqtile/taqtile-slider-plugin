@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 /**
  * Created by dmitry on 9/16/16.
  */
-public class PagerContainer extends FrameLayout implements ViewPager.OnPageChangeListener, ViewPager.OnClickListener {
+public class PagerContainer extends FrameLayout implements ViewPager.OnPageChangeListener {
     private ViewPager mPager;
     boolean mNeedsRedraw = false;
 
@@ -85,9 +85,13 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
                 mDownPosY = ev.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                if (!mMoveOccured) {
-                    // TAP occured
-                    ((MyPagerAdapter) mPager.getAdapter()).getItem(mPager.getCurrentItem()).callOnClick();
+                if (!mMoveOccured && ev.getX() < mPager.getRight() && ev.getX() > mPager.getLeft()) {
+
+                    int currentPageId = mPager.getCurrentItem();
+
+                    View page = ((MyPagerAdapter) mPager.getAdapter()).getItem(currentPageId);
+
+                    page.callOnClick();
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -117,10 +121,5 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
     @Override
     public void onPageScrollStateChanged(int state) {
         mNeedsRedraw = (state != ViewPager.SCROLL_STATE_IDLE);
-    }
-
-    @Override
-    public void onClick(View v) {
-        ((MyPagerAdapter) mPager.getAdapter()).getItem(mPager.getCurrentItem()).callOnClick();
     }
 }
