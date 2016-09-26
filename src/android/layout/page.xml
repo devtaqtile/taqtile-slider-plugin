@@ -26,36 +26,40 @@
     <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="#fff"
-            android:gravity="center"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
-            android:layout_above="@+id/textView" />
+            android:layout_marginTop="10dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/view_border"
+            android:cropToPadding="true"
+            android:gravity="center"
+            android:padding="1dp" />
 
     <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/textViewDesc"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:gravity="center"
             android:textColor="#000"
             android:textSize="20dip"
-            android:textStyle="bold"
-            android:layout_above="@+id/textViewDesc"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:textStyle="bold" />
 
     <TextView
             android:id="@+id/textViewDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/textView"
             android:gravity="center"
             android:textColor="#a7a7a7"
             android:textSize="15dip"
-            android:textStyle="italic"
-            android:layout_alignParentBottom="true"
-            android:layout_alignLeft="@+id/textView"
-            android:layout_alignStart="@+id/textView" />
+            android:textStyle="normal" />
 </RelativeLayout>

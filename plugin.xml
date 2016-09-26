@@ -31,6 +31,8 @@
 
         <source-file src="src/android/layout/page.xml" target-dir="res/layout" />
         <source-file src="src/android/layout/viewpager.xml" target-dir="res/layout" />
+
+        <source-file src="src/android/drawable/view_border.xml" target-dir="res/drawable" />
     </platform>
 
 </plugin>
