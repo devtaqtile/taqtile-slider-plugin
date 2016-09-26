@@ -8,20 +8,10 @@
              android:duplicateParentState="true"
              android:focusable="true">
 
-    <!--<android.support.v4.view.ViewPager-->
-    <!--android:id="@+id/myviewpager"-->
-    <!--android:layout_width="300dp"-->
-    <!--android:layout_height="400dp"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:overScrollMode="never"-->
-    <!--android:layout_centerVertical="true"-->
-    <!--android:layout_centerHorizontal="true" />-->
-
     <com.taqtile.dierbergs.slider.PagerContainer
             android:id="@+id/pager_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
+            android:layout_height="480dp"
             android:background="#fff"
             android:duplicateParentState="true">
 
@@ -31,6 +21,32 @@
                 android:layout_gravity="center_horizontal"
                 android:duplicateParentState="true"
                 android:overScrollMode="never" />
+
     </com.taqtile.dierbergs.slider.PagerContainer>
+
+    <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal|bottom">
+        <RadioButton
+                android:id="@+id/radioBtnOne"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_selector"
+                android:button="@null"/>
+
+        <RadioButton
+                android:id="@+id/radioBtnTwo"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/button_selector"
+                android:button="@null"/>
+
+    </RadioGroup>
 
 </FrameLayout>

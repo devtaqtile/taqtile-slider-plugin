@@ -4,20 +4,16 @@ package com.taqtile.dierbergs.slider;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.RadioGroup;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -28,8 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 /**
  * Created by dmitry on 9/5/16.
@@ -37,19 +31,16 @@ import java.util.ArrayList;
 public class SliderPlugin extends CordovaPlugin {
 
     public final String SLIDER_PLUGIN = "SliderPlugin";
-    public final static int PAGES = 5;
-    // You can choose a bigger number for LOOPS, but you know, nobody will fling
-    // more than 1000 times just in order to test your "infinite" ViewPager :D
-    public final static int LOOPS = 1000;
     public final static int FIRST_PAGE = 0;
 
     public MyPagerAdapter adapter;
     public ViewPager pager;
+    public RadioGroup radioGroup;
     public Activity activity;
     private View pagerLayout;
     private ViewGroup root;
     private boolean isShow;
-    private boolean isClicable = true;
+    private boolean isClickable = true;
 
     @Override
     public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -71,7 +62,6 @@ public class SliderPlugin extends CordovaPlugin {
             final int width = (int) (density * elementParams.getInt("width"));
             final int height = (int) (density * elementParams.getInt("height"));
             final int top = (int) (density * elementParams.getInt("top"));
-
             params = new FrameLayout.LayoutParams(width, height);
             params.gravity = Gravity.CENTER_HORIZONTAL;
             params.topMargin = (int) (density * elementParams.getInt("top"));
@@ -79,32 +69,28 @@ public class SliderPlugin extends CordovaPlugin {
             pagerLayout = LayoutInflater.from(activity).inflate(activity.getResources().getIdentifier("viewpager", "layout", activity.getPackageName()), null);
 
             pagerLayout.setLayoutParams(params);
-//            PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(R.id.pager_container);
             final PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(activity.getResources().getIdentifier("pager_container", "id", activity.getPackageName()));
 
+            radioGroup = (RadioGroup) pagerLayout.findViewById(activity.getResources().getIdentifier("radioGroup", "id", activity.getPackageName()));
+            radioGroup.check(radioGroup.getChildAt(0).getId());
+
+            params = new FrameLayout.LayoutParams(width, height-(int)(25 * density));
+            pagerContainer.setLayoutParams(params);
+            pagerContainer.setRadioGroupView(radioGroup);
 
             pager = pagerContainer.getViewPager();
-
             pager.setClipChildren(false);
-
-            // Set current item to the middle page so we can fling to both
-            // directions left and right
             pager.setCurrentItem(FIRST_PAGE);
-
-            // Necessary or the pager will only have one extra page to show
-            // make this at least however many pages you can see
             pager.setOffscreenPageLimit(3);
-
-            // Set margin for pages as a negative number, so a part of next and
-            // previous pages will be showed
             pager.setPageMargin(30);
+
 
             root = (ViewGroup) webView.getView().getParent();
 
             webView.getView().setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (!isClicable || !isShow || event.getY() > height + top || event.getY() < top) {
+                    if (!isClickable || !isShow || event.getY() > height + top || event.getY() < top) {
                         return false;
                     } else {
                         return pagerContainer.onTouchEvent(event);
@@ -152,10 +138,6 @@ public class SliderPlugin extends CordovaPlugin {
 
                     pager.setAdapter(adapter);
 
-//                    root.removeView(webView.getView());
-
-//                    webView.getView().setBackgroundColor(Color.TRANSPARENT);
-
                     root.addView(pagerLayout, 0);
 
 
@@ -179,7 +161,7 @@ public class SliderPlugin extends CordovaPlugin {
 
             return true;
         } else if ("setClickable".equals(action)) {
-            isClicable = args.getBoolean(0);
+            isClickable = args.getBoolean(0);
 
             return true;
         }

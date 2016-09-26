@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RadioGroup;
 
 /**
  * Created by dmitry on 9/16/16.
@@ -15,6 +16,7 @@ import android.widget.FrameLayout;
 public class PagerContainer extends FrameLayout implements ViewPager.OnPageChangeListener {
     private ViewPager mPager;
     boolean mNeedsRedraw = false;
+    private RadioGroup radioGroupView;
 
     public PagerContainer(Context context) {
         super(context);
@@ -109,17 +111,20 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        //Force the container to redraw on scrolling.
-        //Without this the outer pages render initially and then stay static
         if (mNeedsRedraw) invalidate();
     }
 
     @Override
     public void onPageSelected(int position) {
+        radioGroupView.check(radioGroupView.getChildAt(position).getId());
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
         mNeedsRedraw = (state != ViewPager.SCROLL_STATE_IDLE);
+    }
+
+    public void setRadioGroupView(RadioGroup radioGroupView) {
+        this.radioGroupView = radioGroupView;
     }
 }

@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -26,7 +28,6 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
     private float scale;
     private JSONArray items;
     private ImageLoader imageLoader;
-
 
     public MyPagerAdapter(Activity context, JSONArray items, CallbackContext callbackContext) {
         this.context = context;
@@ -65,13 +66,11 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
             imageLoader.displayImage(item.getString("url"), imageView);
 
             page.setOnClickListener(onClickListener);
-//            textView.setOnClickListener(onClickListener);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // make the first pager bigger than others
         if (position == SliderPlugin.FIRST_PAGE)
             scale = BIG_SCALE;
         else
@@ -118,13 +117,6 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
 
     @Override
     public void transformPage(View page, float position) {
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(400, 100);
-//        params.topMargin = 280;
-//
-//        MyLinearLayout myLinearLayout = new MyLinearLayout(context);
-//        myLinearLayout.setLayoutParams(params);
-//        myLinearLayout.setBackgroundColor(Color.BLACK);
-
         float scale = BIG_SCALE;
         if (position > 0) {
             scale = scale - position * DIFF_SCALE;
@@ -135,5 +127,4 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
         page.setScaleX(scale);
         page.setScaleY(scale);
     }
-
 }
