@@ -34,7 +34,6 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
     }
 
     private void init() {
-        //Disable clipping of children so non-selected pages are visible
         setClipChildren(false);
 
         //Child clipping doesn't work with hardware acceleration in Android 3.x/4.x
