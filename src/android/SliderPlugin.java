@@ -43,6 +43,7 @@ public class SliderPlugin extends CordovaPlugin {
     private View pagerLayout;
     private ViewGroup root;
     private boolean isShow;
+    private boolean isInit = false;
     private boolean isClickable = true;
     private Resources resources = activity.getResources();
     private float density = resources.getDisplayMetrics().density;
@@ -53,8 +54,10 @@ public class SliderPlugin extends CordovaPlugin {
 
         if ("init".equals(action)) {
             try {
-                initPlugin(args);
-                callbackContext.success("init success");
+                if (!isInit) {
+                    initPlugin(args);
+                    callbackContext.success("init success");
+                }
             } catch (JSONException e) {
                 callbackContext.error("Args should be JSON");
             }
@@ -103,6 +106,7 @@ public class SliderPlugin extends CordovaPlugin {
                 pagerLayout = null;
                 root = null;
                 isClickable = true;
+                isInit = false;
             }
         });
     }
