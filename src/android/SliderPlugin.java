@@ -123,28 +123,31 @@ public class SliderPlugin extends CordovaPlugin {
         pager.setPageTransformer(false, adapter);
 
         for (int i = 0; i < args.getJSONArray(0).length(); i++) {
-            RadioButton radioButton = new RadioButton(activity);
-            radioButton.setId(i + 42);
-            radioButton.setWidth((int) (10 * density));
-            radioButton.setHeight((int) (10 * density));
-            radioButton.setGravity(Gravity.CENTER);
+            if(radioGroup.getChildAt(i) == null){
+                RadioButton radioButton = new RadioButton(activity);
+                radioButton.setId(i);
+                radioButton.setWidth((int) (10 * density));
+                radioButton.setHeight((int) (10 * density));
+                radioButton.setGravity(Gravity.CENTER);
 
-            RadioGroup.LayoutParams buttonParams
-                    = new RadioGroup.LayoutParams(activity, null);
-            buttonParams.setMargins(10, 0, 10, 0);
+                RadioGroup.LayoutParams buttonParams
+                        = new RadioGroup.LayoutParams(activity, null);
+                buttonParams.setMargins(10, 0, 10, 0);
 
-            radioButton.setLayoutParams(buttonParams);
-            radioButton.setButtonDrawable(null);
+                radioButton.setLayoutParams(buttonParams);
+                radioButton.setButtonDrawable(null);
 
-            final int resourceId = resources.getIdentifier("button_selector", "drawable",
-                    activity.getPackageName());
-            Drawable drawable = resources.getDrawable(resourceId);
+                final int resourceId = resources.getIdentifier("button_selector", "drawable",
+                        activity.getPackageName());
+                Drawable drawable = resources.getDrawable(resourceId);
 
-            radioButton.setBackground(drawable);
+                radioButton.setBackground(drawable);
 
-            radioGroup.addView(radioButton);
-            if (i == 0) radioGroup.check(i + 42);
+                radioGroup.addView(radioButton);
+            }
         }
+
+        radioGroup.check(radioGroup.getChildAt(0).getId());
 
         pager.setAdapter(adapter);
 
@@ -166,7 +169,7 @@ public class SliderPlugin extends CordovaPlugin {
 
                 root.removeView(pagerLayout);
                 isShow = false;
-                radioGroup.removeAllViews();
+//                radioGroup.removeAllViews();
             }
         });
     }
