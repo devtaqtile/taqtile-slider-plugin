@@ -39,14 +39,14 @@ public class SliderPlugin extends CordovaPlugin {
     public MyPagerAdapter adapter;
     public ViewPager pager;
     public RadioGroup radioGroup;
-    public Activity activity = cordova.getActivity();
+    public Activity activity;
     private View pagerLayout;
     private ViewGroup root;
     private boolean isShow;
     private boolean isInit = false;
     private boolean isClickable = true;
-    private Resources resources = activity.getResources();
-    private float density = resources.getDisplayMetrics().density;
+    private Resources resources;
+    private float density;
 
     @Override
     public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) {
@@ -55,7 +55,12 @@ public class SliderPlugin extends CordovaPlugin {
         if ("init".equals(action)) {
             try {
                 if (!isInit) {
+                    activity = cordova.getActivity();
+                    resources = activity.getResources();
+                    density = resources.getDisplayMetrics().density;
+
                     initPlugin(args);
+                    isInit = true;
                     callbackContext.success("init success");
                 }
             } catch (JSONException e) {
@@ -141,10 +146,6 @@ public class SliderPlugin extends CordovaPlugin {
             if (i == 0) radioGroup.check(i + 42);
         }
 
-        if (Build.VERSION.SDK_INT >= 21 || "org.xwalk.core.XWalkView".equals(webView.getView().getClass().getName())) {
-            webView.getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
-
         pager.setAdapter(adapter);
 
         activity.runOnUiThread(new Runnable() {
@@ -203,16 +204,6 @@ public class SliderPlugin extends CordovaPlugin {
 
         root = (ViewGroup) webView.getView().getParent();
 
-        root.setBackgroundColor(Color.WHITE);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        }
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            webView.getView().setBackgroundColor(0);
-        }
-
-        webView.getView().setBackgroundColor(Color.TRANSPARENT);
-
         webView.getView().setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -221,6 +212,26 @@ public class SliderPlugin extends CordovaPlugin {
                 } else {
                     return pagerContainer.onTouchEvent(event);
                 }
+            }
+        });
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                root.setBackgroundColor(Color.WHITE);
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
+                    activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                }
+
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    webView.getView().setBackgroundColor(0);
+                }
+
+                if (Build.VERSION.SDK_INT >= 21 || "org.xwalk.core.XWalkView".equals(webView.getView().getClass().getName())) {
+                    webView.getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                }
+
+                webView.getView().setBackgroundColor(Color.TRANSPARENT);
             }
         });
     }
