@@ -4,17 +4,8 @@ var Slider = function () {
 
 };
 
-Slider.show = function (element, items, successCallback, errorCallback) {
-    var elementParams = {
-        "width": element.getBoundingClientRect().width,
-        "height": element.getBoundingClientRect().height,
-        "top": element.getBoundingClientRect().top
-    };
-
-    setBackground(element);
-
-    var data = [elementParams, items];
-    exec(successCallback, errorCallback, "SliderPlugin", "show", data)
+Slider.show = function (items, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "SliderPlugin", "show", [items])
 };
 
 function setBackground(element) {
@@ -23,6 +14,18 @@ function setBackground(element) {
     element.style.background = "transparent";
     setBackground(element.parentElement)
 }
+
+Slider.init = function (element, successCallback, errorCallback) {
+    var elementParams = {
+        "width": element.getBoundingClientRect().width,
+        "height": element.getBoundingClientRect().height,
+        "top": element.getBoundingClientRect().top
+    };
+
+    setBackground(element);
+
+    exec(successCallback, errorCallback, "SliderPlugin", "init", [elementParams])
+};
 
 Slider.close = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, "SliderPlugin", "close", [])

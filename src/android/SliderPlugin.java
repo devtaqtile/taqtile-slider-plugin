@@ -39,157 +39,47 @@ public class SliderPlugin extends CordovaPlugin {
     public MyPagerAdapter adapter;
     public ViewPager pager;
     public RadioGroup radioGroup;
-    public Activity activity;
+    public Activity activity = cordova.getActivity();
     private View pagerLayout;
     private ViewGroup root;
     private boolean isShow;
     private boolean isClickable = true;
+    private Resources resources = activity.getResources();
+    private float density = resources.getDisplayMetrics().density;
 
     @Override
-    public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) {
         Log.d(SLIDER_PLUGIN, "SliderPlugin called with options: " + args);
 
-        FrameLayout.LayoutParams params;
-        float density = cordova.getActivity().getResources().getDisplayMetrics().density;
-
-        //TODO: need refactoring
-        if (activity == null && "show".equals(action)) {
-            activity = cordova.getActivity();
-
-            ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
-
-            JSONObject elementParams = args.getJSONObject(0);
-
-            final int width = (int) (density * elementParams.getInt("width"));
-            final int height = (int) (density * elementParams.getInt("height"));
-            final int top = (int) (density * elementParams.getInt("top"));
-            params = new FrameLayout.LayoutParams(width, height);
-            params.gravity = Gravity.CENTER_HORIZONTAL;
-            params.topMargin = (int) (density * elementParams.getInt("top"));
-
-            pagerLayout = LayoutInflater.from(activity).inflate(activity.getResources().getIdentifier("viewpager", "layout", activity.getPackageName()), null);
-
-            pagerLayout.setLayoutParams(params);
-            final PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(activity.getResources().getIdentifier("pager_container", "id", activity.getPackageName()));
-
-            radioGroup = (RadioGroup) pagerLayout.findViewById(activity.getResources().getIdentifier("radioGroup", "id", activity.getPackageName()));
-//            radioGroup.check(radioGroup.getChildAt(0).getId());
-
-            params = new FrameLayout.LayoutParams(width, height - (int) (25 * density));
-            pagerContainer.setLayoutParams(params);
-            pagerContainer.setRadioGroupView(radioGroup);
-
-            pager = pagerContainer.getViewPager();
-            pager.setClipChildren(false);
-            pager.setCurrentItem(FIRST_PAGE);
-            pager.setOffscreenPageLimit(3);
-            pager.setPageMargin(30);
-
-
-            root = (ViewGroup) webView.getView().getParent();
-
-            webView.getView().setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (!isClickable || !isShow || event.getY() > height + top || event.getY() < top) {
-                        return false;
-                    } else {
-                        return pagerContainer.onTouchEvent(event);
-                    }
-                }
-            });
-        }
-
-        if ("close".equals(action)) {
-            cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isShow) return;
-
-                    root.removeView(pagerLayout);
-                    isShow = false;
-                    radioGroup.removeAllViews();
-                }
-            });
-
-            return true;
-        } else if ("show".equals(action)) {
-            adapter = new MyPagerAdapter(activity, args.getJSONArray(1), callbackContext);
-
-            pager.setOffscreenPageLimit(adapter.getCount());
-            pager.setPageTransformer(false, adapter);
-
-            Resources resources = activity.getResources();
-
-            for (int i = 0; i < args.getJSONArray(1).length(); i++) {
-                RadioButton radioButton = new RadioButton(activity);
-                radioButton.setId(i + 42);
-                radioButton.setWidth((int) (10 * density));
-                radioButton.setHeight((int) (10 * density));
-                radioButton.setGravity(Gravity.CENTER);
-
-                RadioGroup.LayoutParams buttonParams
-                        = new RadioGroup.LayoutParams(activity, null);
-                buttonParams.setMargins(10, 0, 10, 0);
-
-                radioButton.setLayoutParams(buttonParams);
-                radioButton.setButtonDrawable(null);
-
-                final int resourceId = resources.getIdentifier("button_selector", "drawable",
-                        activity.getPackageName());
-                Drawable drawable = resources.getDrawable(resourceId);
-
-                radioButton.setBackground(drawable);
-
-                radioGroup.addView(radioButton);
-                if (i == 0) radioGroup.check(i + 42);
+        if ("init".equals(action)) {
+            try {
+                initPlugin(args);
+                callbackContext.success("init success");
+            } catch (JSONException e) {
+                callbackContext.error("Args should be JSON");
             }
 
-            cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (isShow) return;
-
-                    if (Build.VERSION.SDK_INT >= 21 || "org.xwalk.core.XWalkView".equals(webView.getView().getClass().getName())) {
-                        webView.getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                    }
-
-                    root.setBackgroundColor(Color.WHITE);
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-                        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                    }
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                        webView.getView().setBackgroundColor(0);
-                    }
-
-                    webView.getView().setBackgroundColor(Color.TRANSPARENT);
-
-                    pager.setAdapter(adapter);
-
-                    root.addView(pagerLayout, 0);
-
-
-                    isShow = true;
-                }
-            });
-
+            return true;
+        } else if ("close".equals(action)) {
+            closePluginActivity();
+            return true;
+        } else if ("show".equals(action)) {
+            try {
+                showSlider(args, callbackContext);
+            } catch (JSONException e) {
+                callbackContext.error("Args should be JSON");
+            }
             return true;
         } else if ("destroy".equals(action)) {
-            cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (isShow) {
-                        root.removeView(pagerLayout);
-                        isShow = false;
-                    }
 
-                    activity = null;
-                }
-            });
-
+            destroySlider();
             return true;
         } else if ("setClickable".equals(action)) {
-            isClickable = args.getBoolean(0);
+            try {
+                isClickable = args.getBoolean(0);
+            } catch (JSONException e) {
+                callbackContext.error("Args should be JSON");
+            }
 
             return true;
         }
@@ -197,5 +87,137 @@ public class SliderPlugin extends CordovaPlugin {
         return false;
     }
 
+    private void destroySlider() {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isShow) {
+                    root.removeView(pagerLayout);
+                    isShow = false;
+                }
 
+                activity = null;
+                adapter = null;
+                pager = null;
+                radioGroup = null;
+                pagerLayout = null;
+                root = null;
+                isClickable = true;
+            }
+        });
+    }
+
+    private void showSlider(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        adapter = new MyPagerAdapter(activity, args.getJSONArray(0), callbackContext);
+
+        pager.setOffscreenPageLimit(adapter.getCount());
+        pager.setPageTransformer(false, adapter);
+
+        for (int i = 0; i < args.getJSONArray(0).length(); i++) {
+            RadioButton radioButton = new RadioButton(activity);
+            radioButton.setId(i + 42);
+            radioButton.setWidth((int) (10 * density));
+            radioButton.setHeight((int) (10 * density));
+            radioButton.setGravity(Gravity.CENTER);
+
+            RadioGroup.LayoutParams buttonParams
+                    = new RadioGroup.LayoutParams(activity, null);
+            buttonParams.setMargins(10, 0, 10, 0);
+
+            radioButton.setLayoutParams(buttonParams);
+            radioButton.setButtonDrawable(null);
+
+            final int resourceId = resources.getIdentifier("button_selector", "drawable",
+                    activity.getPackageName());
+            Drawable drawable = resources.getDrawable(resourceId);
+
+            radioButton.setBackground(drawable);
+
+            radioGroup.addView(radioButton);
+            if (i == 0) radioGroup.check(i + 42);
+        }
+
+        if (Build.VERSION.SDK_INT >= 21 || "org.xwalk.core.XWalkView".equals(webView.getView().getClass().getName())) {
+            webView.getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+
+        pager.setAdapter(adapter);
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isShow) return;
+                root.addView(pagerLayout, 0);
+                isShow = true;
+            }
+        });
+    }
+
+    private void closePluginActivity() {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isShow) return;
+
+                root.removeView(pagerLayout);
+                isShow = false;
+                radioGroup.removeAllViews();
+            }
+        });
+    }
+
+    private void initPlugin(JSONArray args) throws JSONException {
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
+
+        JSONObject elementParams = args.getJSONObject(0);
+
+        final int width = (int) (density * elementParams.getInt("width"));
+        final int height = (int) (density * elementParams.getInt("height"));
+        final int top = (int) (density * elementParams.getInt("top"));
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, height);
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+        params.topMargin = (int) (density * elementParams.getInt("top"));
+
+        pagerLayout = LayoutInflater.from(activity).inflate(resources.getIdentifier("viewpager", "layout", activity.getPackageName()), null);
+
+        pagerLayout.setLayoutParams(params);
+        final PagerContainer pagerContainer = (PagerContainer) pagerLayout.findViewById(resources.getIdentifier("pager_container", "id", activity.getPackageName()));
+
+        radioGroup = (RadioGroup) pagerLayout.findViewById(resources.getIdentifier("radioGroup", "id", activity.getPackageName()));
+
+        params = new FrameLayout.LayoutParams(width, height - (int) (25 * density));
+        pagerContainer.setLayoutParams(params);
+        pagerContainer.setRadioGroupView(radioGroup);
+
+        pager = pagerContainer.getViewPager();
+        pager.setClipChildren(false);
+        pager.setCurrentItem(FIRST_PAGE);
+        pager.setOffscreenPageLimit(3);
+        pager.setPageMargin(30);
+
+
+        root = (ViewGroup) webView.getView().getParent();
+
+        root.setBackgroundColor(Color.WHITE);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
+            activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            webView.getView().setBackgroundColor(0);
+        }
+
+        webView.getView().setBackgroundColor(Color.TRANSPARENT);
+
+        webView.getView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!isClickable || !isShow || event.getY() > height + top || event.getY() < top) {
+                    return false;
+                } else {
+                    return pagerContainer.onTouchEvent(event);
+                }
+            }
+        });
+    }
 }

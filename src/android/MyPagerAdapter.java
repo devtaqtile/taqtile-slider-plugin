@@ -86,7 +86,7 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
         View page = getItem(position);
-        ((ViewPager) collection).addView(page, 0);
+        collection.addView(page, 0);
 
         return page;
     }
@@ -101,13 +101,6 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-
-        return "test";
-    }
-
 
     @Override
     public int getCount() {
