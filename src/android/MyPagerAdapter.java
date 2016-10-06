@@ -51,6 +51,7 @@ public class MyPagerAdapter extends PagerAdapter implements ViewPager.PageTransf
                     e.printStackTrace();
                 }
             }
+
         };
 
         try {
