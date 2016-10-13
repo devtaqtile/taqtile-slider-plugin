@@ -49,7 +49,7 @@ public class SliderPlugin extends CordovaPlugin {
     private float density;
 
     @Override
-    public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) {
+    public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) {
         Log.d(SLIDER_PLUGIN, "SliderPlugin called with options: " + args);
 
         if ("init".equals(action)) {
@@ -72,11 +72,17 @@ public class SliderPlugin extends CordovaPlugin {
             closePluginActivity();
             return true;
         } else if ("show".equals(action)) {
-            try {
-                showSlider(args, callbackContext);
-            } catch (JSONException e) {
-                callbackContext.error("Args should be JSON");
-            }
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        showSlider(args, callbackContext);
+                    } catch (JSONException e) {
+                        callbackContext.error("Args should be JSON");
+                    }
+                }
+            });
+
             return true;
         } else if ("destroy".equals(action)) {
 
@@ -123,7 +129,7 @@ public class SliderPlugin extends CordovaPlugin {
         pager.setPageTransformer(false, adapter);
 
         for (int i = 0; i < args.getJSONArray(0).length(); i++) {
-            if(radioGroup.getChildAt(i) == null){
+            if (radioGroup.getChildAt(i) == null) {
                 RadioButton radioButton = new RadioButton(activity);
                 radioButton.setId(i);
                 radioButton.setWidth((int) (10 * density));
