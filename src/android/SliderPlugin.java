@@ -89,11 +89,23 @@ public class SliderPlugin extends CordovaPlugin {
             destroySlider();
             return true;
         } else if ("setClickable".equals(action)) {
-            try {
-                isClickable = args.getBoolean(0);
-            } catch (JSONException e) {
-                callbackContext.error("Args should be JSON");
-            }
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        isClickable = args.getBoolean(0);
+
+                        if (isClickable) {
+                            root.bringChildToFront(pagerLayout);
+                        } else {
+                            root.bringChildToFront(webView.getView());
+                        }
+
+                    } catch (JSONException e) {
+                        callbackContext.error("Args should be JSON");
+                    }
+                }
+            });
 
             return true;
         }
@@ -161,8 +173,9 @@ public class SliderPlugin extends CordovaPlugin {
             @Override
             public void run() {
                 if (isShow) return;
-                root.addView(pagerLayout, 0);
+                root.addView(pagerLayout);
                 isShow = true;
+                root.bringChildToFront(pagerLayout);
             }
         });
     }
@@ -213,16 +226,16 @@ public class SliderPlugin extends CordovaPlugin {
 
         root = (ViewGroup) webView.getView().getParent();
 
-        webView.getView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (!isClickable || !isShow || event.getY() > height + top || event.getY() < top) {
-                    return false;
-                } else {
-                    return pagerContainer.onTouchEvent(event);
-                }
-            }
-        });
+//        webView.getView().setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (!isClickable || !isShow || event.getY() > height + top || event.getY() < top) {
+//                    return false;
+//                } else {
+//                    return pagerContainer.onTouchEvent(event);
+//                }
+//            }
+//        });
 
         activity.runOnUiThread(new Runnable() {
             @Override
